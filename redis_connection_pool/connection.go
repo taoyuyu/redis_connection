@@ -2,7 +2,6 @@ package redis_connection_pool
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"strconv"
 
@@ -60,10 +59,14 @@ func ReturnConnection(rc *redis.Conn) error {
 	return nil
 }
 
-func CloseConnection() {
+func CloseConnection() error {
 	close(redisPool)
 	for rs := range redisPool {
-		(*rs).Close()
-		fmt.Println("one connection closed")
+		err := (*rs).Close()
+		if err != nil {
+			return err
+		}
+		log.Println("one connection closed succeed")
 	}
+	return nil
 }
