@@ -2,6 +2,7 @@ package redis_connection_pool
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"strconv"
 
@@ -51,14 +52,18 @@ func GetConnection() *redis.Conn {
 	return <-redisPool
 }
 
-func ReturnConnection(rc *redis.Conn) {
+func ReturnConnection(rc *redis.Conn) error {
+	if rc == nil {
+		return errors.New("Can't return nil connection")
+	}
 	redisPool <- rc
-	return
+	return nil
 }
 
 func CloseConnection() {
+	close(redisPool)
 	for rs := range redisPool {
 		(*rs).Close()
+		fmt.Println("one connection closed")
 	}
-	close(redisPool)
 }
