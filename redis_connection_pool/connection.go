@@ -40,8 +40,6 @@ func InitConnection(host string, port int) error {
 			log.Println("INFO: Redis connect error: ", err)
 			return err
 		}
-		// select 0 in redis
-		rs.Do("SELECT", 0)
 		redisPool <- &rs
 	}
 	return nil
