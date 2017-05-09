@@ -58,6 +58,7 @@ func ReturnConnection(rc *redis.Conn) error {
 }
 
 func CloseConnection() error {
+	//close(channel)后只能读不能写,range完成直接退出
 	close(redisPool)
 	for rs := range redisPool {
 		err := (*rs).Close()
