@@ -8,8 +8,8 @@ import (
 	"github.com/garyburd/redigo/redis"
 )
 
-var MAX_SIZE = 10
-var DEFAULT_SIZE = 5
+var max_size = 10
+var default_size = 5
 var redisPool chan *redis.Conn
 
 func SetSize(size int) (err error) {
@@ -17,10 +17,10 @@ func SetSize(size int) (err error) {
 		err = errors.New("size <= 0 error")
 		return
 	}
-	if size <= MAX_SIZE {
-		DEFAULT_SIZE = size
+	if size <= max_size {
+		default_size = size
 	} else {
-		DEFAULT_SIZE = MAX_SIZE
+		default_size = max_size
 	}
 	return
 }
@@ -30,11 +30,11 @@ func InitConnection(host string, port int) error {
 		err := errors.New("Connection already initialized")
 		return err
 	}
-	redisPool = make(chan *redis.Conn, DEFAULT_SIZE)
+	redisPool = make(chan *redis.Conn, default_size)
 
 	hostName := host + ":" + strconv.Itoa(port)
 
-	for i := 0; i < DEFAULT_SIZE; i++ {
+	for i := 0; i < default_size; i++ {
 		rs, err := redis.Dial("tcp", hostName)
 		if err != nil {
 			log.Println("INFO: Redis connect error: ", err)
