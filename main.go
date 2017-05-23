@@ -25,26 +25,28 @@ func main() {
 
 	wc := new(sync.WaitGroup)
 	wc.Add(2)
+
 	go func() {
 		connect := redis_connection_pool.GetConnection()
 		defer wc.Done()
 		defer redis_connection_pool.ReturnConnection(connect)
 		for i := 0; i < 100; i++ {
-			fmt.Println("func 1:" + strconv.Itoa(i))
+			//fmt.Println("func 1:" + strconv.Itoa(i))
 			_, err1 := (*connect).Do("set", "taoyu"+strconv.Itoa(i), strconv.Itoa(i))
 			if err1 != nil {
 				fmt.Println(err1)
 				return
 			}
 		}
-
+		//(*connect).Do("set", "test", "redis")
 	}()
+
 	go func() {
 		connect := redis_connection_pool.GetConnection()
 		defer wc.Done()
 		defer redis_connection_pool.ReturnConnection(connect)
-		for i := 100; i < 200; i++ {
-			fmt.Println("func 2:" + strconv.Itoa(i))
+		for i := 100; i < 110; i++ {
+			//fmt.Println("func 2:" + strconv.Itoa(i))
 			_, err1 := (*connect).Do("set", "taoyu"+strconv.Itoa(i), strconv.Itoa(i))
 			if err1 != nil {
 				fmt.Println(err1)
@@ -52,9 +54,7 @@ func main() {
 			}
 		}
 	}()
-
 	wc.Wait()
-	fmt.Println("wait done")
 
 	redis_connection_pool.CloseConnection()
 	return
